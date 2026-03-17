@@ -167,14 +167,18 @@ export class PrismaStore implements LucidStore {
   }
 
   async deleteTopic(topicId: string): Promise<void> {
+    // Delete topic cognitive + moderation
     await this.prisma.lucidCognitive.deleteMany({
       where: {
         OR: [
           { kind: 'topic_cognitive', externalId: topicId },
           { kind: 'topic_moderation', externalId: topicId },
-          { kind: 'track', externalId: topicId },
         ],
       },
+    });
+    // Delete track records for this topic (externalId is track id, topicId is in data JSON)
+    await this.prisma.lucidCognitive.deleteMany({
+      where: { kind: 'track', data: { path: ['topicId'], equals: topicId } },
     });
   }
 
@@ -193,7 +197,7 @@ export class PrismaStore implements LucidStore {
       data: {
         id: record.id,
         kind: 'track',
-        externalId: record.topicId || record.userId,
+        externalId: record.id,
         userId: record.userId,
         data: record as object,
       },
@@ -210,7 +214,7 @@ export class PrismaStore implements LucidStore {
 
   async getTracksByTopic(topicId: string): Promise<TrackRecord[]> {
     const records = await this.prisma.lucidCognitive.findMany({
-      where: { kind: 'track', externalId: topicId },
+      where: { kind: 'track', data: { path: ['topicId'], equals: topicId } },
       orderBy: { createdAt: 'asc' },
     });
     return records.map((r: { data: unknown }) => r.data as TrackRecord);
@@ -226,7 +230,7 @@ export class PrismaStore implements LucidStore {
 
   async deleteTracksByTopic(topicId: string): Promise<void> {
     await this.prisma.lucidCognitive.deleteMany({
-      where: { kind: 'track', externalId: topicId },
+      where: { kind: 'track', data: { path: ['topicId'], equals: topicId } },
     });
   }
 }
