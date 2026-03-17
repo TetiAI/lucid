@@ -1,0 +1,82 @@
+{
+  "name": "@tetiai/lucid",
+  "version": "0.1.0",
+  "description": "Cognitive health protection for AI agents — track, protect, and enhance human cognition",
+  "author": "TetiAI LLC",
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/tetiai/lucid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tetiai/lucid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tetiai/lucid/issues"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "prisma",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "tsc --noEmit",
+    "test": "vitest",
+    "playground": "tsx playground/server.ts",
+    "prepublishOnly": "npm run build",
+    "prisma:generate": "prisma generate --schema=prisma/schema.prisma"
+  },
+  "keywords": [
+    "cognitive",
+    "ai",
+    "protection",
+    "agent",
+    "llm",
+    "autonomy",
+    "learning",
+    "engagement",
+    "metacognition",
+    "scaffolding",
+    "cognitive-drift",
+    "ai-safety",
+    "cognitive-health"
+  ],
+  "peerDependencies": {
+    "@prisma/client": ">=5.0.0",
+    "openai": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@prisma/client": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.7.0",
+    "openai": "^4.104.0",
+    "prisma": "^5.7.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "@toon-format/toon": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

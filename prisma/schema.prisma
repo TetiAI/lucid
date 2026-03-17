@@ -1,0 +1,38 @@
+// ============================================================
+// Lucid SDK — Database Schema
+// Single table design: one table for all cognitive data types.
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Single table for all Lucid cognitive data.
+/// Uses `kind` as discriminator to store different data types:
+/// - user_cognitive: aggregated user cognitive profile
+/// - topic_cognitive: per-conversation cognitive scores
+/// - user_moderation: aggregated user moderation data
+/// - topic_moderation: per-conversation moderation flags
+model LucidCognitive {
+  id         String   @id @default(cuid())
+  /// Discriminator: user_cognitive | topic_cognitive | user_moderation | topic_moderation
+  kind       String
+  /// The external ID (userId or topicId from the host application)
+  externalId String
+  /// Optional userId for topic records (enables counting topics per user)
+  userId     String?
+  /// The cognitive/moderation data as JSON
+  data       Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([kind, externalId])
+  @@index([kind])
+  @@index([userId])
+  @@map("lucid_cognitive")
+}
