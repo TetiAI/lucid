@@ -339,4 +339,4 @@ Lucid is designed to add **zero latency** and **near-zero cost** to your AI appl
 
 ## License
 
-BSD-3-Clause — TetiAI LLC
+BSD 3-Clause — TetiAI LLC
