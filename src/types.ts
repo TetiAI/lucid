@@ -57,11 +57,29 @@ export interface ModerationFlag {
 // ========== AGE GROUP ==========
 
 /**
- * Age-based protection tier.
- * Under-25 users get stricter fatigue thresholds and more protective guidelines,
- * based on neuroplasticity research showing higher cognitive vulnerability in younger users.
+ * Age-based protection tiers aligned with neurodevelopmental stages.
+ *
+ * The brain develops in stages with distinct cognitive vulnerabilities at each phase:
+ *
+ * - **child** (6-12): Concrete operational stage (Piaget). Building foundational reasoning,
+ *   working memory, and problem-solving. AI must never replace this learning process.
+ *   Based on: Piaget (1952), Cognitive Development Theory; Diamond (2013), Executive Functions.
+ *
+ * - **teen** (13-17): Formal operational stage begins. Abstract thinking develops but
+ *   prefrontal cortex is immature — high neuroplasticity means both faster learning AND
+ *   faster habit formation of dependency patterns. Emotional regulation still developing.
+ *   Based on: Casey et al. (2008), adolescent brain development; Steinberg (2005), risk-taking.
+ *
+ * - **young_adult** (18-24): Prefrontal cortex still maturing (~25). Critical thinking and
+ *   decision-making improving but not yet fully developed. Vulnerable to cognitive offloading
+ *   becoming habitual before full executive function maturity.
+ *   Based on: Arain et al. (2013), prefrontal cortex maturation; APA Advisory (2025).
+ *
+ * - **adult** (25+): Fully mature prefrontal cortex. Standard cognitive protections apply.
+ *   Risk is atrophy from disuse, not developmental interference.
+ *
  */
-export type AgeGroup = 'under25' | 'adult';
+export type AgeGroup = 'child' | 'teen' | 'young_adult' | 'adult';
 
 // ========== SESSION ==========
 

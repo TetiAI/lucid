@@ -121,7 +121,13 @@ async function handler(req: IncomingMessage, res: ServerResponse) {
 
     const userId = uid || 'user-1';
     const topicId = tid || 'topic-1';
-    const ageGroup = age ? (parseInt(age, 10) < 25 ? 'under25' as const : 'adult' as const) : undefined;
+    const ageGroup = age ? (() => {
+      const ageNum = parseInt(age, 10);
+      if (ageNum < 13) return 'child' as const;
+      if (ageNum < 18) return 'teen' as const;
+      if (ageNum < 25) return 'young_adult' as const;
+      return 'adult' as const;
+    })() : undefined;
 
     // Chat history
     const hKey = userId + ':' + topicId;

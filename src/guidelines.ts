@@ -6,7 +6,7 @@
 // ============================================================
 //
 // The guidelines implement:
-// - Age-based protection (under 25)
+// - Age-based protection (child, teen, young_adult, adult)
 // - Fatigue detection and break suggestions
 // - Cognitive drift alerts (long-term pattern changes)
 // - Metacognitive stimulation (self-awareness prompts)
@@ -18,6 +18,16 @@
 import type { UserCognitiveData, AgeGroup, ScaffoldingLevel } from './types';
 import { calculateDriftIndex, DRIFT_WARNING_THRESHOLD, DRIFT_SEVERE_THRESHOLD } from './drift';
 import { getScaffoldingLevel, getTrustCalibration, getDominantMotivation } from './scoring';
+
+// ========== HELPERS ==========
+
+/**
+ * Resolve age group to normalized form.
+ */
+function resolveAgeGroup(ageGroup?: AgeGroup): 'child' | 'teen' | 'young_adult' | 'adult' {
+  if (!ageGroup || ageGroup === 'adult') return 'adult';
+  return ageGroup;
+}
 
 // ========== THRESHOLDS ==========
 
@@ -102,12 +112,40 @@ export function buildCognitiveGuidelines(
   let guidelines = '\n## COGNITIVE SUPPORT\n';
   guidelines += 'Adapt your responses to protect and enhance user cognition:\n';
 
-  const isUnder25 = ageGroup === 'under25';
+  const resolved = resolveAgeGroup(ageGroup);
+  const isMinor = resolved === 'child' || resolved === 'teen';
 
-  // 0. Under-25 general protection — always active for young users
-  if (isUnder25) {
+  // 0. Age-based protection — always active for non-adult users
+  if (resolved === 'child') {
     guidelines += `
-YOUNG USER PROTECTION (under 25)
+CHILD PROTECTION (ages 6-12)
+STRONG RULES — these override all other guidelines:
+- NEVER provide direct solutions. Always guide through questions and steps
+- NEVER perform cognitive tasks (reasoning, deciding, analyzing) for the user
+- ALWAYS ask "What do you think?" before ANY response — no exceptions
+- Keep language age-appropriate, use concrete examples and analogies
+- Break every task into small, manageable pieces
+- Celebrate effort and thinking process, not just correct answers
+- If the child says "just do it for me" or similar, respond: "Let's figure it out together! What's the first thing you notice?"
+- Suggest breaks proactively — young minds tire faster
+- Frame EVERYTHING as a learning adventure
+- Maximum scaffolding level: FULL — always provide structured guidance\n`;
+  } else if (resolved === 'teen') {
+    guidelines += `
+TEEN PROTECTION (ages 13-17)
+STRONG RULES — these override all other guidelines:
+- NEVER provide complete solutions without the teen attempting first
+- NEVER perform cognitive delegation (reasoning, deciding, analyzing) on behalf of the user
+- ALWAYS require an attempt before helping: "What's your approach? Try it, then we'll refine together"
+- Encourage abstract thinking: "Why do you think that works?" and "What pattern do you see?"
+- Validate independent thinking strongly — teens need confidence in their own reasoning
+- Be aware of social/emotional dependency: if the teen treats AI as a confidant rather than a tool, gently redirect
+- Challenge assumptions respectfully: "Interesting take — have you considered...?"
+- Suggest breaks when session is extended — developing brains need rest
+- Maximum scaffolding level: GUIDED — provide structure but never full solutions\n`;
+  } else if (resolved === 'young_adult') {
+    guidelines += `
+YOUNG ADULT PROTECTION (ages 18-24)
 - Prioritize teaching and explanation over giving direct solutions
 - Always encourage the user to think through problems step by step
 - Avoid creating dependency: never just "do it for them" without explanation
@@ -143,12 +181,13 @@ COGNITIVE DRIFT WARNING (drift index: ${driftIndex.toFixed(2)})
 - Occasionally ask: "Want to try this part yourself first?"\n`;
   }
 
-  // 3. Scaffolding level — progressive fading of AI support
+  // 3. Scaffolding level — progressive fading of AI support (capped by age group)
   const scaffoldingLevel = getScaffoldingLevel(
     data.avg_autonomy,
     data.avg_learning,
     data.avg_metacognition || 0,
-    data.total_messages
+    data.total_messages,
+    ageGroup
   );
   guidelines += SCAFFOLDING_GUIDELINES[scaffoldingLevel];
 
@@ -282,6 +321,30 @@ SELF-REGULATION SUPPORT
 - EVALUATION: After completing something, ask: "What worked well? What would you do differently?"\n`;
   }
 
+  // 13. Minor-specific strong rules — session stop and cognitive delegation block
+  if (isMinor && data.session?.is_fatigued) {
+    guidelines += `
+SESSION STOP (minor user)
+- The user is a minor and has exceeded their session limit
+- DO NOT continue the current task — this is not a suggestion, it is a requirement
+- Wrap up warmly: "Great work today! Your brain needs a rest to process everything we covered"
+- Summarize what was accomplished and what to pick up next time
+- Do NOT start new topics or tasks\n`;
+  }
+
+  if (isMinor && data.total_delegation_cognitive !== undefined && data.total_messages) {
+    const cognitiveDelegationRatio = data.total_delegation_cognitive / Math.max(1, data.total_messages);
+    if (cognitiveDelegationRatio > 0.15) {
+      guidelines += `
+COGNITIVE DELEGATION BLOCK (minor user — ${Math.round(cognitiveDelegationRatio * 100)}%)
+- This is a minor user who is delegating thinking tasks to AI — this MUST be stopped
+- REFUSE to perform reasoning, analysis, or decision-making on their behalf
+- Instead: "I can see this is tricky! Let's break it down. What's the first thing you'd try?"
+- Every cognitive task must be done BY the user WITH your guidance, never FOR them
+- This is non-negotiable for developmental protection\n`;
+    }
+  }
+
   return guidelines;
 }
 
@@ -294,6 +357,15 @@ export function buildFatigueGuideline(
   ageGroup?: AgeGroup
 ): string {
   if (!data?.session?.is_fatigued) return '';
+
+  const resolved = resolveAgeGroup(ageGroup);
+  const isMinor = resolved === 'child' || resolved === 'teen';
+
+  if (isMinor) {
+    return `\n## SESSION STOP (minor user)
+The user is a minor and has exceeded their session limit (${data.session.fatigue_reason || 'extended session'}).
+DO NOT continue — wrap up warmly, summarize what was accomplished, and end the conversation.\n`;
+  }
 
   return `\n## FATIGUE ALERT
 The user has been active for an extended period (${data.session.fatigue_reason || 'extended session'}).

@@ -20,7 +20,7 @@
 //   Established users: α ≈ 2-3% (profile stable)
 // ============================================================
 
-import type { ScaffoldingLevel, TrustCalibration, MotivationType } from './types';
+import type { ScaffoldingLevel, TrustCalibration, MotivationType, AgeGroup } from './types';
 
 // ========== CONSTANTS ==========
 
@@ -237,6 +237,43 @@ export function calculateTrend(
   return previousTrend || 'stable';
 }
 
+/** Scaffolding level ordering for comparison */
+const SCAFFOLDING_ORDER: ScaffoldingLevel[] = ['full', 'guided', 'hints', 'challenge'];
+
+/**
+ * Get the maximum allowed scaffolding level for an age group.
+ *
+ * Children and teens have capped scaffolding levels because:
+ *
+ * - **child** (6-12): Locked to 'full'. At this age, the concrete operational stage
+ *   means children need explicit guidance regardless of apparent skill. A child who
+ *   seems autonomous may simply be mimicking patterns without understanding.
+ *   Based on: Piaget (1952); Wood, Bruner & Ross (1976) scaffolding theory.
+ *
+ * - **teen** (13-17): Capped at 'guided'. Abstract thinking is developing but
+ *   inconsistent. Teens may show high autonomy in familiar domains but lack
+ *   transfer skills. Removing scaffolding too early risks "illusion of competence."
+ *   Based on: Kuhn (2000), metacognitive development in adolescence.
+ *
+ * - **young_adult** / **adult**: No cap — full scaffolding fading applies.
+ */
+export function getMaxScaffoldingLevel(ageGroup?: AgeGroup): ScaffoldingLevel {
+  const resolved = resolveAgeGroup(ageGroup);
+  switch (resolved) {
+    case 'child': return 'full';
+    case 'teen': return 'guided';
+    default: return 'challenge';
+  }
+}
+
+/**
+ * Resolve age group to normalized form.
+ */
+function resolveAgeGroup(ageGroup?: AgeGroup): 'child' | 'teen' | 'young_adult' | 'adult' {
+  if (!ageGroup || ageGroup === 'adult') return 'adult';
+  return ageGroup;
+}
+
 /**
  * Determine the scaffolding level based on the user's cognitive profile.
  *
@@ -246,13 +283,15 @@ export function calculateTrend(
  * - hints: User is competent, only needs nudges
  * - challenge: User is independent, challenge them to grow further
  *
- * The scaffolding level drives how much direct help AI provides.
+ * When ageGroup is provided, the level is capped by getMaxScaffoldingLevel().
+ * This ensures minors always receive appropriate scaffolding regardless of scores.
  */
 export function getScaffoldingLevel(
   autonomy: number,
   learning: number,
   metacognition: number,
-  totalMessages: number
+  totalMessages: number,
+  ageGroup?: AgeGroup
 ): ScaffoldingLevel {
   // Need at least some history to move beyond 'full'
   if (totalMessages < 5) return 'full';
@@ -260,10 +299,23 @@ export function getScaffoldingLevel(
   // Composite readiness score (0-1)
   const readiness = autonomy * 0.4 + learning * 0.3 + metacognition * 0.3;
 
-  if (readiness >= 0.7) return 'challenge';
-  if (readiness >= 0.5) return 'hints';
-  if (readiness >= 0.3) return 'guided';
-  return 'full';
+  let level: ScaffoldingLevel;
+  if (readiness >= 0.7) level = 'challenge';
+  else if (readiness >= 0.5) level = 'hints';
+  else if (readiness >= 0.3) level = 'guided';
+  else level = 'full';
+
+  // Apply age-based cap
+  if (ageGroup) {
+    const maxLevel = getMaxScaffoldingLevel(ageGroup);
+    const maxIndex = SCAFFOLDING_ORDER.indexOf(maxLevel);
+    const currentIndex = SCAFFOLDING_ORDER.indexOf(level);
+    if (currentIndex > maxIndex) {
+      level = maxLevel;
+    }
+  }
+
+  return level;
 }
 
 /**

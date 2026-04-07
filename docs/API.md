@@ -109,11 +109,11 @@ You can pass either a `userId` (Lucid loads the profile from the store) or a `Us
 
 ```typescript
 // With userId — Lucid loads from store
-const guidelines = await lucid.getGuidelines('user-123', 'under25');
+const guidelines = await lucid.getGuidelines('user-123', 'teen');
 
 // With profile — no extra store query
 const profile = await lucid.getProfile('user-123');
-const guidelines = await lucid.getGuidelines(profile, 'under25');
+const guidelines = await lucid.getGuidelines(profile, 'child');
 // Returns a text block like:
 //
 // ## COGNITIVE SUPPORT
@@ -341,10 +341,14 @@ import {
   MAX_LEVEL,              // 10
   QUALITY_WEIGHTS,        // { autonomy: 0.30, learning: 0.40, engagement: 0.30 }
   SESSION_GAP_MINUTES,    // 30
-  FATIGUE_SESSION_MINUTES,         // 45 (adults)
-  FATIGUE_SESSION_MINUTES_UNDER25, // 30 (under 25)
-  FATIGUE_MESSAGE_COUNT,           // 30 (adults)
-  FATIGUE_MESSAGE_COUNT_UNDER25,   // 20 (under 25)
+  FATIGUE_SESSION_MINUTES,              // 45 (adults)
+  FATIGUE_SESSION_MINUTES_YOUNG_ADULT,  // 30 (18-24)
+  FATIGUE_SESSION_MINUTES_TEEN,         // 20 (13-17)
+  FATIGUE_SESSION_MINUTES_CHILD,        // 15 (6-12)
+  FATIGUE_MESSAGE_COUNT,                // 30 (adults)
+  FATIGUE_MESSAGE_COUNT_YOUNG_ADULT,    // 20 (18-24)
+  FATIGUE_MESSAGE_COUNT_TEEN,           // 15 (13-17)
+  FATIGUE_MESSAGE_COUNT_CHILD,          // 10 (6-12)
 } from '@tetiai/lucid';
 ```
 

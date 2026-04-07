@@ -212,7 +212,7 @@ function start() {
   const ageVal = document.getElementById('s-age').value;
   cfg = { userId: document.getElementById('s-user').value||'user-1', topicId: document.getElementById('s-topic').value||'topic-1', age: ageVal || null };
   document.getElementById('setup').classList.add('hidden');
-  const ageLabel = ageVal ? (parseInt(ageVal) < 25 ? ' · under 25' : ' · adult') : '';
+  const ageLabel = ageVal ? (() => { const a = parseInt(ageVal); if (a < 13) return ' · child'; if (a < 18) return ' · teen'; if (a < 25) return ' · young adult'; return ' · adult'; })() : '';
   document.getElementById('h-meta').textContent = cfg.userId + ' · ' + cfg.topicId + ' · ' + model + ageLabel;
   document.getElementById('inp').disabled = false;
   document.getElementById('btn').disabled = false;

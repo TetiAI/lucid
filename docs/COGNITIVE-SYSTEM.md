@@ -85,17 +85,46 @@ New Score = 0.03 × (-1.0) + 0.97 × 0.5 = 0.455
 
 ### Age-Based Protection
 
-Users under 25 receive enhanced cognitive protections based on neuroscience research showing the prefrontal cortex (responsible for critical thinking and impulse control) doesn't fully mature until ~25.
+Lucid provides four age-based protection tiers aligned with neurodevelopmental stages. Each tier adjusts fatigue thresholds, scaffolding caps, and guideline strictness based on how the brain develops at that stage.
 
 ```typescript
-const guidelines = await lucid.getGuidelines(userId, 'under25');
+const guidelines = await lucid.getGuidelines(userId, 'child');  // 6-12
+const guidelines = await lucid.getGuidelines(userId, 'teen');   // 13-17
+const guidelines = await lucid.getGuidelines(userId, 'young_adult'); // 18-24
+const guidelines = await lucid.getGuidelines(userId, 'adult');  // 25+
+
+// Backwards compatible:
+const guidelines = await lucid.getGuidelines(userId, 'young_adult'); // 18-24
 ```
 
-| | Adults | Under 25 |
-|---|--------|----------|
-| Session limit | 45 min | 30 min |
-| Message limit | 30/session | 20/session |
-| Extra guidelines | No | Always-on teaching-first approach |
+| | Child (6-12) | Teen (13-17) | Young Adult (18-24) | Adult (25+) |
+|---|---|---|---|---|
+| Session limit | 15 min | 20 min | 30 min | 45 min |
+| Message limit | 10/session | 15/session | 20/session | 30/session |
+| Max scaffolding | `full` only | `full` / `guided` | all levels | all levels |
+| Cognitive delegation | **Blocked** | **Blocked** | Warned | Warned |
+| Session fatigue | **Hard stop** | **Hard stop** | Suggestion | Suggestion |
+| Guidelines | Always Socratic, never direct answers | Require attempt first, validate independent thinking | Teaching-first approach | Standard |
+
+#### Why These Tiers?
+
+**Child (6-12)** — Piaget's concrete operational stage. Children are building foundational reasoning, working memory, and problem-solving skills. AI must never replace this learning process — at this age, the process IS the learning. Scaffolding is locked to `full` because even a seemingly capable child may be mimicking patterns without deep understanding (Piaget, 1952; Diamond, 2013).
+
+**Teen (13-17)** — Abstract thinking is developing but inconsistent. The prefrontal cortex is undergoing rapid myelination, making this period both high-opportunity and high-risk: habits formed now (including delegation habits) become deeply ingrained due to heightened neuroplasticity (Casey et al., 2008; Steinberg, 2005). Scaffolding caps at `guided` because teens need structure even when they appear autonomous. Emotional dependency on AI is also monitored — teens may use AI as a social substitute.
+
+**Young Adult (18-24)** — The prefrontal cortex is still maturing (~25). Critical thinking and decision-making are improving but not fully developed. Stricter fatigue thresholds and teaching-first guidelines apply (Arain et al., 2013; APA, 2025).
+
+**Adult (25+)** — Fully mature prefrontal cortex. The risk is atrophy from disuse (neuroplasticity works both ways), not developmental interference. Standard adaptive protections apply.
+
+#### Hard Rules for Minors
+
+For `child` and `teen` users, certain protections are **strong rules** rather than adaptive guidelines:
+
+1. **Cognitive delegation block**: If a minor's cognitive delegation ratio exceeds 15%, the AI is instructed to refuse performing reasoning/analysis tasks and instead guide the user through the problem. For adults this is a warning; for minors it's a requirement.
+
+2. **Session stop**: When fatigue is detected for a minor, guidelines instruct the AI to wrap up the conversation (summarize accomplishments, suggest what to pick up next time) rather than merely suggesting a break. This protects against extended sessions during critical developmental periods.
+
+3. **Mandatory generation effect**: For children, every response must begin by asking "What do you think?" — this is not optional regardless of the user's scores. For teens, an attempt is required before help is provided.
 
 ### Delegation Types
 
@@ -183,13 +212,15 @@ Available in `CognitiveProfile` as `scaffoldingLevel`. Guidelines automatically 
 
 ### Fatigue Detection
 
-The system detects cognitive fatigue through:
+The system detects cognitive fatigue through three indicators, with age-appropriate thresholds:
 
-1. **Long session**: > 45 minutes (adults) / > 30 minutes (under 25)
-2. **High volume**: > 30 messages (adults) / > 20 messages (under 25)
+1. **Long session**: Exceeds the age-specific duration limit (15/20/30/45 min)
+2. **High volume**: Exceeds the age-specific message limit (10/15/20/30 per session)
 3. **Response shortening**: Pattern of progressively shorter responses (avg < 20 chars)
 
 A "session" resets automatically after 30 minutes of inactivity.
+
+For minors (child/teen), fatigue triggers a **session stop** rather than a suggestion — the AI wraps up the conversation instead of merely recommending a break.
 
 ---
 

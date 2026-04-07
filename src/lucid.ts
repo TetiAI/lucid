@@ -183,9 +183,10 @@ export class Lucid {
 
   /**
    * Get the cognitive profile for a user.
+   * Pass ageGroup to apply age-based scaffolding caps.
    * Returns null if no data has been tracked yet.
    */
-  async getProfile(userId: string): Promise<CognitiveProfile | null> {
+  async getProfile(userId: string, ageGroup?: AgeGroup): Promise<CognitiveProfile | null> {
     const data = await this.store.getUser(userId);
     if (!data) return null;
 
@@ -212,7 +213,8 @@ export class Lucid {
         data.avg_autonomy,
         data.avg_learning,
         data.avg_metacognition || 0,
-        data.total_messages
+        data.total_messages,
+        ageGroup
       ),
       weeklyHistory: data.weekly_history,
       cognitiveData: data,
@@ -223,7 +225,7 @@ export class Lucid {
    * Get cognitive adaptation guidelines for injection into an AI system prompt.
    *
    * Accepts either a userId (loads from store), a CognitiveProfile (from getProfile),
-   * or raw UserCognitiveData. Pass ageGroup for under-25 protections.
+   * or raw UserCognitiveData. Pass ageGroup for age-based protections.
    */
   async getGuidelines(userId: string, ageGroup?: AgeGroup): Promise<string>;
   async getGuidelines(profile: CognitiveProfile, ageGroup?: AgeGroup): Promise<string>;

@@ -72,13 +72,13 @@ Pure mathematical functions, zero side effects:
 ### `session.ts` — Session & Fatigue
 Tracks cognitive sessions and detects fatigue with age-aware thresholds:
 - Session gap detection (30-min inactivity = new session)
-- Duration-based fatigue (> 45 min adults, > 30 min under 25)
-- Volume-based fatigue (> 30 msgs adults, > 20 msgs under 25)
+- Duration-based fatigue (age-specific: 15/20/30/45 min for child/teen/young_adult/adult)
+- Volume-based fatigue (age-specific: 10/15/20/30 msgs)
 - Pattern-based fatigue (shortening responses)
 
 ### `guidelines.ts` — Prompt Guidelines
 Generates adaptive text for AI system prompts:
-- Under-25 protection (always-on teaching-first guidelines)
+- Age-based protection (child/teen/young_adult/adult) with strong rules for minors
 - Fatigue warnings with break suggestions
 - Autonomy-based adaptation (delegation vs independence)
 - Metacognition-aware guidance (encouraging self-verification and reflection)

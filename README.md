@@ -142,7 +142,7 @@ Lucid also implements **progressive scaffolding** (Vygotsky's ZPD) — AI suppor
 - **AI chatbots & assistants** — protect users from becoming dependent on your product
 - **EdTech platforms** — preserve learning outcomes when students use AI
 - **Enterprise AI tools** — maintain workforce critical thinking skills
-- **Youth-facing AI** — extra protection for users under 25 (prefrontal cortex still developing)
+- **Youth-facing AI** — developmental protection tiers for children (6-12), teens (13-17), and young adults (18-24)
 
 ---
 
@@ -153,7 +153,7 @@ Lucid also implements **progressive scaffolding** (Vygotsky's ZPD) — AI suppor
 - **Cheap models work** — optimized for small models (Llama 3.1 8B, Gemini Flash). No frontier model needed
 - **~40% token savings** — analysis uses [TOON format](https://github.com/toon-format/toon) instead of JSON
 - **Pluggable storage** — MemoryStore (dev), PrismaStore (production), RedisStore (distributed), or implement your own
-- **Age-based protection** — stricter thresholds for under-25 users based on neuroscience research
+- **Age-based protection** — four developmental tiers (child, teen, young_adult, adult) with strong protection for minors
 - **Drift detection** — Cognitive Drift Index catches gradual decline over weeks/months
 - **Effectiveness tracking** — measures if guidelines are actually improving engagement
 - **GDPR ready** — `deleteUser()` for complete data deletion. No message content stored, only aggregated metrics

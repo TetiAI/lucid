@@ -31,6 +31,7 @@ export {
   calculateTrend,
   getWeekString,
   getScaffoldingLevel,
+  getMaxScaffoldingLevel,
   getTrustCalibration,
   getDominantMotivation,
   detectContextChangeAlpha,
@@ -49,11 +50,17 @@ export {
   detectFatigue,
   updateSession,
   createEmptySession,
+  getSessionLimit,
+  getMessageLimit,
   SESSION_GAP_MINUTES,
   FATIGUE_SESSION_MINUTES,
-  FATIGUE_SESSION_MINUTES_UNDER25,
+  FATIGUE_SESSION_MINUTES_YOUNG_ADULT,
+  FATIGUE_SESSION_MINUTES_TEEN,
+  FATIGUE_SESSION_MINUTES_CHILD,
   FATIGUE_MESSAGE_COUNT,
-  FATIGUE_MESSAGE_COUNT_UNDER25,
+  FATIGUE_MESSAGE_COUNT_YOUNG_ADULT,
+  FATIGUE_MESSAGE_COUNT_TEEN,
+  FATIGUE_MESSAGE_COUNT_CHILD,
 } from './session';
 
 // Drift detection

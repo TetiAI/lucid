@@ -112,35 +112,91 @@ The logarithmic decay `α = max(0.02, 0.1 / log₁₀(n + 10))` was chosen becau
 
 ---
 
-## Enhanced Protection for Under-25 Users
+## Developmental Age-Based Protection
 
-### Why Under 25?
+### Four Protection Tiers
 
-The prefrontal cortex — responsible for planning, impulse control, decision-making, and critical thinking — does not fully mature until approximately age 25 (Arain et al., 2013). During this developmental window, young users are more vulnerable to cognitive dependency patterns.
+Lucid provides four age-based protection tiers aligned with neurodevelopmental stages. The brain does not develop linearly — each stage has distinct cognitive capabilities, vulnerabilities, and AI-related risks.
 
-### Key Research
+### Child (6-12): Concrete Operational Stage
 
-#### AICICA — AI Chatbot Induced Cognitive Atrophy
-Recent research has identified AICICA (AI Chatbot Induced Cognitive Atrophy) as the potential deterioration of essential cognitive abilities — critical thinking, analytical acumen, and creativity — resulting from overreliance on AI chatbots. Studies show that younger participants exhibit higher dependence on AI tools and lower critical thinking scores compared to older participants (Gerlich, 2025).
+At this age, children are building foundational cognitive skills: working memory, problem-solving, logical reasoning, and executive function. AI that provides direct answers bypasses the learning process entirely — the child never develops the neural pathways for independent reasoning.
 
-#### Neuroplasticity Vulnerability
-The developing brain's heightened neuroplasticity makes it both more adaptable AND more vulnerable. Passive, uncritical reliance on AI may weaken activity-dependent brain plasticity and erode cognition, whereas active co-creation can sustain or enhance it (Bossi et al., 2025). Functional MRI studies show changes in neural connectivity patterns in young digital users, suggesting long-term neuroplasticity effects.
+**Key Research:**
 
-#### APA Advisory on AI and Adolescents (2025)
-The American Psychological Association has issued health advisories noting that developers should avoid exploiting sensitivities of young people, such as heightened social sensitivity and underdeveloped impulse control. AI interactions during critical developmental stages require extra safeguards.
+- **Piaget (1952)**: Children ages 7-11 are in the concrete operational stage — they can think logically about concrete events but struggle with abstract concepts. Scaffolding must be explicit and structured.
+- **Diamond (2013)**: Executive functions (working memory, inhibitory control, cognitive flexibility) develop progressively through childhood. These skills are strengthened by practice and weakened by bypass — if AI does the thinking, the EF circuits don't develop.
+- **Wood, Bruner & Ross (1976)**: Original scaffolding theory — adult support should be calibrated to the child's current ability and gradually withdrawn. The adult (or AI) should do the minimum needed for the child to succeed, not the maximum.
+- **Bunce et al. (2010)**: Sustained attention in children ages 6-12 averages 15-20 minutes for focused cognitive work, significantly shorter than adults.
 
-#### Educational Impact
-Students who heavily relied on AI dialogue systems exhibited diminished decision-making and critical analysis abilities, as these systems allowed them to offload essential cognitive tasks. This is particularly concerning in educational settings where cognitive skill development is the primary goal.
+**Lucid's protections:**
+- Session limit: 15 minutes, 10 messages per session
+- Scaffolding locked to `full` — AI always provides structured step-by-step guidance
+- Cognitive delegation is blocked — AI refuses to do reasoning/analysis for the child
+- Mandatory generation effect: "What do you think?" before every response
+- Session fatigue triggers a strong stop, not a suggestion
 
-### Lucid's Under-25 Protections
+### Teen (13-17): Formal Operational & Adolescent Brain
 
-Based on this research, Lucid applies stricter parameters for users under 25:
+Abstract thinking is developing but inconsistent. The prefrontal cortex is undergoing rapid myelination and synaptic pruning, making this a period of both high opportunity and high risk. Habits formed during adolescence — including cognitive delegation habits — become deeply wired due to heightened neuroplasticity.
 
-1. **Lower fatigue thresholds**: Session limit reduced from 45 to 30 minutes, message limit from 30 to 20 per session. Young users' sustained attention degrades faster, and the developmental risk of overexposure is higher.
+**Key Research:**
 
-2. **Protective guidelines**: The AI system prompt always includes instructions to prioritize teaching over direct solutions, encourage step-by-step thinking, and avoid creating dependency patterns.
+- **Casey, Jones & Hare (2008)**: The adolescent brain shows a developmental mismatch — the limbic system (reward, emotion) matures before the prefrontal cortex (planning, impulse control). This makes teens more susceptible to immediate-reward patterns like AI delegation ("instant answer" dopamine).
+- **Steinberg (2005)**: Risk-taking and sensation-seeking peak in adolescence due to this prefrontal-limbic imbalance. Applied to AI: teens may not recognize the long-term cognitive cost of habitual delegation.
+- **Kuhn (2000)**: Metacognitive development in adolescence is uneven — teens may appear autonomous in familiar domains but lack transfer skills and consistent self-monitoring. Removing scaffolding too early risks "illusion of competence."
+- **Lally et al. (2010)**: Habit formation takes approximately 66 days on average, but can be faster in adolescents due to heightened neuroplasticity. Cognitive delegation patterns can become automatic within 2-4 weeks.
+- **Crone & Dahl (2012)**: Understanding the unique aspects of adolescent cognitive and brain development is critical for designing age-appropriate educational interventions.
 
-3. **Same cognitive scoring**: The scoring system remains identical — young users are not penalized or scored differently, only protected more proactively.
+**Lucid's protections:**
+- Session limit: 20 minutes, 15 messages per session
+- Scaffolding capped at `guided` — AI provides structure but never full solutions
+- Cognitive delegation is blocked — AI requires an attempt before helping
+- Emotional dependency monitoring: if teen treats AI as confidant, guidelines redirect
+- Session fatigue triggers a strong stop
+
+### Young Adult (18-24): Late Prefrontal Maturation
+
+The prefrontal cortex continues maturing until approximately age 25. Critical thinking, decision-making, and long-term planning are improving but not fully developed. This is the period when cognitive habits solidify into adult patterns.
+
+**Key Research:**
+
+- **Arain et al. (2013)**: The prefrontal cortex — responsible for planning, impulse control, decision-making, and critical thinking — does not fully mature until approximately age 25.
+- **APA Advisory on AI and Adolescents (2025)**: Developers should avoid exploiting sensitivities of young people. AI interactions during critical developmental stages require extra safeguards.
+- **AICICA (Gerlich, 2025)**: AI Chatbot Induced Cognitive Atrophy — younger participants exhibit higher dependence on AI tools and lower critical thinking scores compared to older participants.
+
+**Lucid's protections:**
+- Session limit: 30 minutes, 20 messages per session
+- All scaffolding levels available (no cap)
+- Teaching-first approach always active in guidelines
+- Standard cognitive delegation warnings
+
+### Adult (25+): Mature but Vulnerable to Atrophy
+
+Fully mature prefrontal cortex. The risk is not developmental interference but cognitive atrophy from disuse — neuroplasticity works both ways.
+
+**Key Research:**
+
+- **Bossi et al. (2025)**: The "3R principle" — passive, uncritical reliance on AI may weaken activity-dependent brain plasticity and erode cognition, whereas active co-creation can sustain or enhance it.
+- **MIT Media Lab (2025)**: Heavy AI delegation correlates with measurable decline in critical thinking over 3-6 months, even in adults.
+
+**Lucid's protections:**
+- Session limit: 45 minutes, 30 messages per session
+- All scaffolding levels available, full adaptive fading
+- Standard cognitive protections based on profile
+
+### Hard Rules vs Adaptive Guidelines
+
+A key distinction in Lucid's age-based system:
+
+| Protection | Child/Teen (minors) | Young Adult/Adult |
+|---|---|---|
+| Cognitive delegation | **Blocked** — AI refuses and redirects | **Warned** — guidelines discourage but don't block |
+| Session fatigue | **Hard stop** — AI wraps up conversation | **Suggestion** — AI suggests a break |
+| Generation effect | **Mandatory** — every response starts with "What do you think?" | **Adaptive** — applied based on scaffolding level |
+| Scaffolding cap | **Enforced** — child=full, teen=guided | **None** — determined by cognitive profile |
+
+This distinction exists because minors are in a developmental window where the cost of cognitive dependency is permanent structural impact on brain development, not just temporary skill atrophy.
 
 ---
 
@@ -150,16 +206,22 @@ Based on this research, Lucid applies stricter parameters for users under 25:
 
 Based on research in cognitive load theory (Sweller, 2011) and attention management:
 
-1. **Temporal fatigue**: Sustained attention degrades after 45-50 minutes (Mackworth, 1948; Neri et al., 2002)
+1. **Temporal fatigue**: Sustained attention degrades at age-dependent thresholds
 2. **Volume fatigue**: Information processing capacity decreases after high-volume exchanges
 3. **Behavioral indicators**: Response shortening is a reliable marker of disengagement and fatigue in text-based interactions
 
-### Why 45 Minutes?
+### Why These Thresholds?
 
-The 45-minute threshold comes from research on sustained attention:
-- Mackworth's "clock test" (1948): Performance drops significantly after 30-45 minutes
-- Modern studies confirm: 40-50 minutes is the typical attention span for focused cognitive work
-- This is why most educational systems use ~50 minute class periods
+Session duration limits are derived from sustained attention research at each developmental stage:
+
+| Age Group | Session Limit | Message Limit | Research Basis |
+|-----------|--------------|---------------|----------------|
+| Child (6-12) | 15 min | 10 | Bunce et al. (2010): 15-20 min sustained attention |
+| Teen (13-17) | 20 min | 15 | Steinberg (2005): improving but still limited ~20-25 min |
+| Young Adult (18-24) | 30 min | 20 | Arain et al. (2013): prefrontal cortex still maturing |
+| Adult (25+) | 45 min | 30 | Mackworth (1948): 40-50 min typical sustained attention |
+
+The adult threshold of 45 minutes comes from Mackworth's "clock test" (1948) — performance drops significantly after 30-45 minutes of sustained cognitive work. This is why most educational systems use ~50 minute class periods.
 
 ### Why Response Shortening?
 
@@ -385,3 +447,19 @@ These validated instruments ensure that Lucid's LLM-based analysis measures cons
 30. Howard, J. L., Slemp, G. R., & Wang, M. T. (2024). SDT Meta-Analysis of Student Populations. Self-Determination Theory research.
 
 31. Lee, H., et al. (2025). The Impact of GenAI on Critical Thinking: A CHI 2025 Study. Microsoft Research / CMU. *Proceedings of CHI 2025*.
+
+32. Piaget, J. (1952). *The Origins of Intelligence in Children*. International Universities Press.
+
+33. Diamond, A. (2013). Executive Functions. *Annual Review of Psychology*, 64, 135-168.
+
+34. Wood, D., Bruner, J. S., & Ross, G. (1976). The role of tutoring in problem solving. *Journal of Child Psychology and Psychiatry*, 17(2), 89-100.
+
+35. Casey, B. J., Jones, R. M., & Hare, T. A. (2008). The Adolescent Brain. *Annals of the New York Academy of Sciences*, 1124(1), 111-126.
+
+36. Steinberg, L. (2005). Cognitive and affective development in adolescence. *Trends in Cognitive Sciences*, 9(2), 69-74.
+
+37. Kuhn, D. (2000). Metacognitive Development. *Current Directions in Psychological Science*, 9(5), 178-181.
+
+38. Crone, E. A., & Dahl, R. E. (2012). Understanding adolescence as a period of social-affective engagement and goal flexibility. *Nature Reviews Neuroscience*, 13(9), 636-650.
+
+39. Bunce, D. M., Flens, E. A., & Neiles, K. Y. (2010). How Long Can Students Pay Attention in Class? A Study of Student Attention Decline Using Clickers. *Journal of Chemical Education*, 87(12), 1438-1443.

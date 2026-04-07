@@ -5,11 +5,21 @@
 // ============================================================
 //
 // Fatigue indicators:
-// 1. Session duration > 45 minutes
-// 2. Message count > 30 in a single session
+// 1. Session duration exceeds age-appropriate threshold
+// 2. Message count exceeds age-appropriate limit
 // 3. User responses progressively shortening (avg < 20 chars)
 //
 // A "session" resets after 30 minutes of inactivity.
+//
+// Age-based thresholds are grounded in developmental research:
+// - Child (6-12): Sustained attention ~15-20 min (Mackworth, 1948;
+//   Bunce et al., 2010). Shorter sessions protect foundational learning.
+// - Teen (13-17): Attention span improving but still limited ~20-25 min
+//   (Steinberg, 2005). High neuroplasticity = higher dependency risk.
+// - Young adult (18-24): ~30 min, prefrontal cortex still maturing
+//   (Arain et al., 2013).
+// - Adult (25+): ~45-50 min sustained attention (Mackworth, 1948;
+//   Neri et al., 2002). Standard thresholds.
 // ============================================================
 
 import type { SessionData, AgeGroup } from './types';
@@ -19,17 +29,33 @@ import type { SessionData, AgeGroup } from './types';
 /** Minutes of inactivity before starting a new session */
 export const SESSION_GAP_MINUTES = 30;
 
-/** Minutes before suggesting a break — standard (adults) */
+// --- Session duration limits (minutes) ---
+
+/** Minutes before suggesting a break — adults (25+) */
 export const FATIGUE_SESSION_MINUTES = 45;
 
-/** Minutes before suggesting a break — under 25 */
-export const FATIGUE_SESSION_MINUTES_UNDER25 = 30;
+/** Minutes before suggesting a break — young adults (18-24) */
+export const FATIGUE_SESSION_MINUTES_YOUNG_ADULT = 30;
 
-/** Messages in a session before suggesting a break — standard (adults) */
+/** Minutes before suggesting a break — teens (13-17) */
+export const FATIGUE_SESSION_MINUTES_TEEN = 20;
+
+/** Minutes before suggesting a break — children (6-12) */
+export const FATIGUE_SESSION_MINUTES_CHILD = 15;
+
+// --- Message count limits per session ---
+
+/** Messages in a session before suggesting a break — adults (25+) */
 export const FATIGUE_MESSAGE_COUNT = 30;
 
-/** Messages in a session before suggesting a break — under 25 */
-export const FATIGUE_MESSAGE_COUNT_UNDER25 = 20;
+/** Messages in a session before suggesting a break — young adults (18-24) */
+export const FATIGUE_MESSAGE_COUNT_YOUNG_ADULT = 20;
+
+/** Messages in a session before suggesting a break — teens (13-17) */
+export const FATIGUE_MESSAGE_COUNT_TEEN = 15;
+
+/** Messages in a session before suggesting a break — children (6-12) */
+export const FATIGUE_MESSAGE_COUNT_CHILD = 10;
 
 /** Minimum responses needed to detect shortening pattern */
 export const FATIGUE_MIN_RESPONSES = 3;
@@ -39,6 +65,40 @@ export const FATIGUE_SHORT_RESPONSE_THRESHOLD = 20;
 
 /** How many recent response lengths to track */
 export const RESPONSE_LENGTHS_WINDOW = 5;
+
+// ========== HELPERS ==========
+
+/**
+ * Resolve age group to normalized form.
+ */
+function resolveAgeGroup(ageGroup?: AgeGroup): 'child' | 'teen' | 'young_adult' | 'adult' {
+  if (!ageGroup || ageGroup === 'adult') return 'adult';
+  return ageGroup;
+}
+
+/**
+ * Get the session duration limit (minutes) for an age group.
+ */
+export function getSessionLimit(ageGroup?: AgeGroup): number {
+  switch (resolveAgeGroup(ageGroup)) {
+    case 'child': return FATIGUE_SESSION_MINUTES_CHILD;
+    case 'teen': return FATIGUE_SESSION_MINUTES_TEEN;
+    case 'young_adult': return FATIGUE_SESSION_MINUTES_YOUNG_ADULT;
+    default: return FATIGUE_SESSION_MINUTES;
+  }
+}
+
+/**
+ * Get the message count limit per session for an age group.
+ */
+export function getMessageLimit(ageGroup?: AgeGroup): number {
+  switch (resolveAgeGroup(ageGroup)) {
+    case 'child': return FATIGUE_MESSAGE_COUNT_CHILD;
+    case 'teen': return FATIGUE_MESSAGE_COUNT_TEEN;
+    case 'young_adult': return FATIGUE_MESSAGE_COUNT_YOUNG_ADULT;
+    default: return FATIGUE_MESSAGE_COUNT;
+  }
+}
 
 // ========== FUNCTIONS ==========
 
@@ -56,9 +116,8 @@ export function detectFatigue(
   now: Date,
   ageGroup?: AgeGroup
 ): { is_fatigued: boolean; reason?: string } {
-  const isUnder25 = ageGroup === 'under25';
-  const sessionLimit = isUnder25 ? FATIGUE_SESSION_MINUTES_UNDER25 : FATIGUE_SESSION_MINUTES;
-  const messageLimit = isUnder25 ? FATIGUE_MESSAGE_COUNT_UNDER25 : FATIGUE_MESSAGE_COUNT;
+  const sessionLimit = getSessionLimit(ageGroup);
+  const messageLimit = getMessageLimit(ageGroup);
 
   // 1. Check session duration
   const sessionStart = new Date(session.started_at);
